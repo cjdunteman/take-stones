@@ -13,7 +13,6 @@ public class Helper {
 	 * @return boolean True if x is prime; Otherwise, false
 	 */
 	public static boolean isPrime(int x) {
-
 		// Corner case
 		if (x <= 1)
 			return false;
@@ -34,11 +33,16 @@ public class Helper {
 	 */
 	public static int getLargestPrimeFactor(int x) {
 
-		// for (int i = 2; i < x; i++) {
-		// if (x) {
-
-		// }
-		// }
+		if (x <= 1) {
+			throw new IllegalArgumentException();
+		}
+		int i;
+		for (i = 2; i <= x; i++) {
+			if (x % i == 0) {
+				x /= i;
+				i--;
+			}
+		}
 
 		return -1;
 
