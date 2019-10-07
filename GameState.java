@@ -5,6 +5,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 class GameState {
+    static final double END_STATE = 1.0;
+    static final double FIRST_TURN = 0.0;
+    static final double LAST_MOVE_ODD_ONE = 0.5;
+    static final double LAST_MOVE_EVEN_ONE = -0.5;
+    static final double LAST_MOVE_ODD_PRIME = 0.7;
+    static final double LAST_MOVE_EVEN_PRIME = -0.7;
+    static final double LAST_MOVE_ODD_COMPOSITE = 0.6;
+    static final double LAST_MOVE_EVEN_COMPOSITE = -0.6;
+
     private int size; // The number of stones
     private boolean[] stones; // Game state: true for available stones, false for taken ones
     private int lastMove; // The last move
@@ -106,32 +115,33 @@ class GameState {
 
         // If first move
         if (this.lastMove == -1) {
-            score = Constants.FIRST_TURN;
+            score = FIRST_TURN;
             return score;
         } else {
             if (succList.size() == 0) {
                 // No moves for maximizer
-                score = Constants.END_STATE;
+                score = END_STATE;
             } else if (this.lastMove == 1) {
                 // If even
                 if (succList.size() % 2 == 0) {
-                    score = Constants.LAST_MOVE_ONE_EVEN;
+                    score = LAST_MOVE_EVEN_ONE;
                 } else {
-                    score = Constants.LAST_MOVE_ONE_ODD;
+                    score = LAST_MOVE_ODD_ONE;
                 }
             } else if (Helper.isPrime(this.lastMove)) {
+                // If even and prime
                 if (Helper.getMultiplesCount(this.lastMove, succList) % 2 == 0) {
-                    score = Constants.LAST_MOVE_PRIME_EVEN;
+                    score = LAST_MOVE_EVEN_PRIME;
                 } else {
-                    score = Constants.LAST_MOVE_PRIME_ODD;
+                    score = LAST_MOVE_ODD_PRIME;
                 }
             } else {
                 int largestPrimeFactor = Helper.getLargestPrimeFactor(this.lastMove);
-                // If even
+                // If even and composite
                 if (Helper.getMultiplesCount(largestPrimeFactor, succList) % 2 == 0) {
-                    score = Constants.LAST_MOVE_COMPOSITE_EVEN;
+                    score = LAST_MOVE_EVEN_COMPOSITE;
                 } else {
-                    score = Constants.LAST_MOVE_COMPOSITE_ODD;
+                    score = LAST_MOVE_ODD_COMPOSITE;
                 }
             }
         }

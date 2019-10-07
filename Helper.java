@@ -2,6 +2,8 @@ import java.util.List;
 
 public class Helper {
 
+	static final int SMALLEST_PRIME = 2;
+
 	/**
 	 * Class constructor.
 	 */
@@ -15,10 +17,10 @@ public class Helper {
 	 * @return boolean True if x is prime; Otherwise, false
 	 */
 	public static boolean isPrime(int x) {
-		if (x < Constants.SMALLEST_PRIME) {
+		if (x < SMALLEST_PRIME) {
 			return false;
 		}
-		for (int i = Constants.SMALLEST_PRIME; i <= Math.sqrt(x); i++) {
+		for (int i = SMALLEST_PRIME; i <= Math.sqrt(x); i++) {
 			if (x % i == 0) {
 				return false;
 			}
@@ -34,11 +36,11 @@ public class Helper {
 	 * @return int The largest prime factor of x
 	 */
 	public static int getLargestPrimeFactor(int x) throws IllegalArgumentException {
-		if (x < Constants.SMALLEST_PRIME) {
+		if (x < SMALLEST_PRIME) {
 			throw new IllegalArgumentException();
 		}
 		int i;
-		for (i = Constants.SMALLEST_PRIME; i <= x; i++) {
+		for (i = SMALLEST_PRIME; i <= x; i++) {
 			if (x % i == 0) {
 				x = x / i;
 				i--;
