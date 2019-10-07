@@ -18,9 +18,7 @@ public class Helper {
 		if (x < Constants.SMALLEST_PRIME) {
 			return false;
 		}
-
-		double sqrt = Math.sqrt(x);
-		for (int i = Constants.SMALLEST_PRIME; i <= sqrt; i++) {
+		for (int i = Constants.SMALLEST_PRIME; i <= Math.sqrt(x); i++) {
 			if (x % i == 0) {
 				return false;
 			}
@@ -42,7 +40,7 @@ public class Helper {
 		int i;
 		for (i = Constants.SMALLEST_PRIME; i <= x; i++) {
 			if (x % i == 0) {
-				x /= i;
+				x = x / i;
 				i--;
 			}
 		}
@@ -58,20 +56,19 @@ public class Helper {
 	 * @return the number of multiples found
 	 */
 	public static int getMultiplesCount(int x, List<Integer> list) {
-		int multiples = 0;
+		int multiple = 0;
 
 		if (list.size() < 1) {
-			return multiples;
+			return multiple;
 		} else if (x == 0) {
-			// Can't happen, but yeah
 			return 0;
 		}
 
 		for (int test : list) {
 			if (test % x == 0) {
-				multiples++;
+				multiple += 1;
 			}
 		}
-		return multiples;
+		return multiple;
 	}
 }

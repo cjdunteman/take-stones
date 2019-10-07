@@ -101,18 +101,19 @@ class GameState {
      * @return int This is the static score of given state
      */
     double evaluate(boolean maxTurn) {
-        List<Integer> succList = this.getMoves();
         double score;
+        List<Integer> succList = this.getMoves();
 
-        // First turn of the game
+        // If first move
         if (this.lastMove == -1) {
             score = Constants.FIRST_TURN;
             return score;
-        } else { // subsequent turns
+        } else {
             if (succList.size() == 0) {
-                // No legal moves on max turn, max loses
+                // No moves for maximizer
                 score = Constants.END_STATE;
             } else if (this.lastMove == 1) {
+                // If even
                 if (succList.size() % 2 == 0) {
                     score = Constants.LAST_MOVE_ONE_EVEN;
                 } else {
@@ -124,8 +125,9 @@ class GameState {
                 } else {
                     score = Constants.LAST_MOVE_PRIME_ODD;
                 }
-            } else { // not 1, not prime, must be composite
+            } else {
                 int largestPrimeFactor = Helper.getLargestPrimeFactor(this.lastMove);
+                // If even
                 if (Helper.getMultiplesCount(largestPrimeFactor, succList) % 2 == 0) {
                     score = Constants.LAST_MOVE_COMPOSITE_EVEN;
                 } else {
