@@ -1,20 +1,22 @@
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GameState {
-    private int size;            // The number of stones
-    private boolean[] stones;    // Game state: true for available stones, false for taken ones
-    private int lastMove;        // The last move
+class GameState {
+    private int size; // The number of stones
+    private boolean[] stones; // Game state: true for available stones, false for taken ones
+    private int lastMove; // The last move
 
     /**
      * Class constructor specifying the number of stones.
      */
-    public GameState(int size) {
+    GameState(int size) {
 
         this.size = size;
 
-        //  For convenience, we use 1-based index, and set 0 to be unavailable
+        // For convenience, we use 1-based index, and set 0 to be unavailable
         this.stones = new boolean[this.size + 1];
         this.stones[0] = false;
 
@@ -30,31 +32,61 @@ public class GameState {
     /**
      * Copy constructor
      */
-    public GameState(GameState other) {
+    private GameState(GameState other) {
         this.size = other.size;
         this.stones = Arrays.copyOf(other.stones, other.stones.length);
         this.lastMove = other.lastMove;
     }
-
 
     /**
      * This method is used to compute a list of legal moves
      *
      * @return This is the list of state's moves
      */
-    public List<Integer> getMoves() {
-        // TODO Add your code here
-        return null;
+    List<Integer> getMoves() {
+        List<Integer> movesList = new ArrayList<>();
+
+        // Check if this is first move
+        if (this.lastMove == -1) {
+            double moveCeiling = (double) this.size / 2;
+            for (Integer i = 1; i <= this.size; i++) {
+                // Check if i is odd and less than half of total stones
+                if ((i % 2 != 0) && (i < moveCeiling)) {
+                    movesList.add(i);
+                }
+            }
+        } else {
+            for (Integer i = 1; i <= this.size; i++) {
+                // Check if stone is multiple or factor of the last move and available
+                if (((this.lastMove % i == 0) || (i % this.lastMove == 0)) && this.stones[i]) {
+                    movesList.add(i);
+                }
+            }
+        }
+        return movesList;
     }
 
+    boolean maxTurn(int turns) {
+        return turns % 2 == 0;
+    }
+
+    int getTurns() {
+        int turns = 0;
+        for (int i = 1; i <= this.size; i++) {
+            if (!this.stones[i]) {
+                turns += 1;
+            }
+        }
+        return turns;
+    }
 
     /**
-     * This method is used to generate a list of successors
-     * using the getMoves() method
+     * This method is used to generate a list of successors using the getMoves()
+     * method
      *
      * @return This is the list of state's successors
      */
-    public List<GameState> getSuccessors() {
+    List<GameState> getSuccessors() {
         return this.getMoves().stream().map(move -> {
             var state = new GameState(this);
             state.removeStone(move);
@@ -62,16 +94,58 @@ public class GameState {
         }).collect(Collectors.toList());
     }
 
-
     /**
-     * This method is used to evaluate a game state based on
-     * the given heuristic function
+     * This method is used to evaluate a game state based on the given heuristic
+     * function
      *
      * @return int This is the static score of given state
      */
-    public double evaluate() {
-        // TODO Add your code here
-        return 0.0;
+    double evaluate(boolean maxTurn) {
+        List<Integer> succList = this.getMoves();
+        double score;
+
+        // First turn of the game
+        if (this.lastMove == -1) {
+            score = Constants.FIRST_TURN;
+            return score;
+        } else { // subsequent turns
+            if (succList.size() == 0) {
+                // No legal moves on max turn, max loses
+                score = Constants.END_STATE;
+            } else if (this.lastMove == 1) {
+                if (succList.size() % 2 == 0) {
+                    score = Constants.LAST_MOVE_ONE_EVEN;
+                } else {
+                    score = Constants.LAST_MOVE_ONE_ODD;
+                }
+            } else if (Helper.isPrime(this.lastMove)) {
+                if (Helper.getMultiplesCount(this.lastMove, succList) % 2 == 0) {
+                    score = Constants.LAST_MOVE_PRIME_EVEN;
+                } else {
+                    score = Constants.LAST_MOVE_PRIME_ODD;
+                }
+            } else { // not 1, not prime, must be composite
+                int largestPrimeFactor = Helper.getLargestPrimeFactor(this.lastMove);
+                if (Helper.getMultiplesCount(largestPrimeFactor, succList) % 2 == 0) {
+                    score = Constants.LAST_MOVE_COMPOSITE_EVEN;
+                } else {
+                    score = Constants.LAST_MOVE_COMPOSITE_ODD;
+                }
+            }
+        }
+
+        if (maxTurn) {
+            return score;
+        } else {
+            return score * -1;
+        }
+    }
+
+    /**
+     * Get the last move
+     */
+    int getLastMove() {
+        return this.lastMove;
     }
 
     /**
@@ -79,44 +153,9 @@ public class GameState {
      *
      * @param idx Index of the taken stone
      */
-    public void removeStone(int idx) {
+    void removeStone(int idx) {
         this.stones[idx] = false;
         this.lastMove = idx;
     }
 
-    /**
-     * These are get/set methods for a stone
-     *
-     * @param idx Index of the taken stone
-     */
-    public void setStone(int idx) {
-        this.stones[idx] = true;
-    }
-
-    public boolean getStone(int idx) {
-        return this.stones[idx];
-    }
-
-    /**
-     * These are get/set methods for lastMove variable
-     *
-     * @param move Index of the taken stone
-     */
-    public void setLastMove(int move) {
-        this.lastMove = move;
-    }
-
-    public int getLastMove() {
-        return this.lastMove;
-    }
-
-    /**
-     * This is get method for game size
-     *
-     * @return int the number of stones
-     */
-    public int getSize() {
-        return this.size;
-    }
-
-}	
+}
