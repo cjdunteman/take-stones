@@ -1,3 +1,5 @@
+package takestones;
+
 import java.util.List;
 
 class AlphaBetaPruning {

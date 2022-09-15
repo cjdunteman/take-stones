@@ -1,3 +1,5 @@
+package takestones;
+
 public class TakeStones {
 
 	/**
@@ -9,10 +11,18 @@ public class TakeStones {
 	 * @exception IndexOutOfBoundsException On input error.
 	 */
 	public static void main(String[] args) {
+		if (args.length > 0) {
+			for (String arg : args) {
+				System.out.println(arg);
+			}
+		}
 		try {
 			// Read input from command line
 			int n = Integer.parseInt(args[0]); // the number of stones
+			System.out.println(n);
 			int nTaken = Integer.parseInt(args[1]); // the number of taken stones
+
+			System.out.println(n + " " + nTaken);
 
 			// Initialize the game state
 			GameState state = new GameState(n); // game state
